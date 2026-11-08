@@ -6,7 +6,7 @@ name: Site
 on:
   pull_request:
   push:
-    branches: [master]
+    branches: [master, site-preview]
   workflow_dispatch:
 
 # Superseded PR runs are cancelled. Runs on master queue, so a deploy is never cut off.
@@ -36,13 +36,13 @@ jobs:
       - run: pnpm check
       - run: pnpm test
       - run: pnpm build
-      - if: github.ref == 'refs/heads/master'
+      - if: (github.ref == 'refs/heads/master' || github.ref == 'refs/heads/site-preview')
         uses: actions/upload-pages-artifact@v5
         with:
           path: site/dist
 
   deploy:
-    if: github.ref == 'refs/heads/master'
+    if: (github.ref == 'refs/heads/master' || github.ref == 'refs/heads/site-preview')
     needs: build
     runs-on: ubuntu-latest
     permissions:
